@@ -37,6 +37,8 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 // Подключение к MongoDB
+console.log('MONGO_URI:', process.env.MONGO_URI);
+
 mongoose
     .connect(process.env.MONGO_URI)
     .then(() => {
