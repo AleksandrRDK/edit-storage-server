@@ -12,9 +12,17 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// 🛠️ Настроенный CORS
+app.use(
+    cors({
+        origin: 'https://aleksandrrdk.github.io',
+        credentials: true,
+    })
+);
+
 app.use(express.json());
 
+// Подключение к MongoDB
 mongoose
     .connect(process.env.MONGO_URI)
     .then(() => {
@@ -25,6 +33,7 @@ mongoose
         console.error('Ошибка подключения к MongoDB:', err);
     });
 
+// Роуты
 app.get('/', (req, res) => {
     res.send('Сервер работает!');
 });
