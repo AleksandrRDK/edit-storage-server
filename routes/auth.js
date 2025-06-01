@@ -7,11 +7,26 @@ import authMiddleware from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
-    const { email, password, nickname } = req.body;
+    const {
+        email,
+        password,
+        nickname,
+        role = 'user',
+        adminSecret = '',
+    } = req.body;
+
     try {
         const existingUser = await User.findOne({ email });
         if (existingUser)
             return res.status(400).json({ message: 'Почта уже используется' });
+
+        if (role === 'admin') {
+            if (adminSecret !== process.env.ADMIN_SECRET) {
+                return res
+                    .status(403)
+                    .json({ message: 'Неверный секретный пароль для админа' });
+            }
+        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -19,6 +34,7 @@ router.post('/register', async (req, res) => {
             email,
             password: hashedPassword,
             nickname,
+            role,
         });
 
         await newUser.save();

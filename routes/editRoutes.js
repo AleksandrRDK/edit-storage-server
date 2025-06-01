@@ -54,19 +54,33 @@ router.get('/paginated', async (req, res) => {
 
 router.post('/', authMiddleware, async (req, res) => {
     try {
-        const { title, author, video, tags } = req.body;
+        const { title, author, video, tags, source, rating } = req.body;
 
-        if (!title || !author || !video) {
+        if (!title || !author || !video || !source || rating === undefined) {
             return res
                 .status(400)
                 .json({ message: 'Заполните все обязательные поля' });
+        }
+
+        if (!['youtube', 'cloudinary'].includes(source)) {
+            return res
+                .status(400)
+                .json({ message: 'Некорректный источник видео (source)' });
+        }
+
+        if (typeof rating !== 'number' || rating < 0 || rating > 11) {
+            return res.status(400).json({
+                message: 'Рейтинг должен быть числом от 0 до 11',
+            });
         }
 
         const newEdit = new Edit({
             title,
             author,
             video,
+            source,
             tags,
+            rating,
         });
 
         const savedEdit = await newEdit.save();

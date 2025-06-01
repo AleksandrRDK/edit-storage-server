@@ -14,6 +14,8 @@ router.get('/', async (req, res) => {
         );
         if (existing) return res.json(existing.edit);
 
+        await EditOfDay.deleteMany({ date: { $lt: today } });
+
         const count = await Edit.countDocuments();
         const random = Math.floor(Math.random() * count);
         const randomEdit = await Edit.findOne().skip(random);

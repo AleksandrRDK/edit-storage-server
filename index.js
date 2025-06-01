@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 // 🛠️ Настроенный CORS
 app.use(
     cors({
-        origin: 'https://aleksandrrdk.github.io',
+        origin: ['http://localhost:5173', 'https://aleksandrrdk.github.io'],
         credentials: true,
     })
 );
