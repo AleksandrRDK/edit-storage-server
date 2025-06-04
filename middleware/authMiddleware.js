@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
-export default function authMiddleware(req, res, next) {
+export default async function authMiddleware(req, res, next) {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -11,8 +12,13 @@ export default function authMiddleware(req, res, next) {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        req.userId = decoded.userId;
+        const user = await User.findById(decoded.id).select('-password');
+
+        if (!user) {
+            return res.status(401).json({ message: 'Пользователь не найден' });
+        }
+
+        req.user = user;
         next();
     } catch (err) {
         return res.status(401).json({ message: 'Недействительный токен' });

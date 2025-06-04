@@ -4,6 +4,11 @@ const editSchema = new mongoose.Schema(
     {
         title: { type: String, required: true },
         author: String,
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
+        },
         video: { type: String, required: true },
         source: {
             type: String,

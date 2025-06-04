@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post('/:editId', authMiddleware, async (req, res) => {
     try {
-        const userId = req.userId;
+        const userId = req.user._id;
         const { editId } = req.params;
 
         const user = await User.findById(userId);
@@ -31,7 +31,7 @@ router.post('/:editId', authMiddleware, async (req, res) => {
 
 router.delete('/:editId', authMiddleware, async (req, res) => {
     try {
-        const userId = req.userId;
+        const userId = req.user._id;
         const { editId } = req.params;
 
         const user = await User.findById(userId);
@@ -54,7 +54,7 @@ router.delete('/:editId', authMiddleware, async (req, res) => {
 
 router.get('/', authMiddleware, async (req, res) => {
     try {
-        const userId = req.userId;
+        const userId = req.user._id;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 20;
         const skip = (page - 1) * limit;
@@ -96,7 +96,7 @@ router.get('/', authMiddleware, async (req, res) => {
 
 router.get('/check/:editId', authMiddleware, async (req, res) => {
     try {
-        const userId = req.userId;
+        const userId = req.user._id;
         const { editId } = req.params;
 
         const user = await User.findById(userId).select('favorites');

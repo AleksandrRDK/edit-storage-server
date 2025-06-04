@@ -6,6 +6,7 @@ import editRoutes from './routes/editRoutes.js';
 import authRoutes from './routes/auth.js';
 import favoritesRoutes from './routes/favoritesRoutes.js';
 import getEditOfTheDay from './routes/editOfTheDay.js';
+import commentRoutes from './routes/comments.js';
 
 dotenv.config();
 
@@ -57,3 +58,4 @@ app.use('/api/edits', editRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users/favorites', favoritesRoutes);
 app.use('/api/edit-of-the-day', getEditOfTheDay);
+app.use('/api/comments', commentRoutes);

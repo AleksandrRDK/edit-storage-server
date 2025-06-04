@@ -61,7 +61,7 @@ router.post('/login', async (req, res) => {
                 .status(400)
                 .json({ message: 'Неверная почта или пароль' });
 
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: '7d',
         });
 
@@ -82,7 +82,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/change-password', authMiddleware, async (req, res) => {
     try {
-        const userId = req.userId;
+        const userId = req.user._id;
         const { oldPassword, newPassword } = req.body;
 
         const user = await User.findById(userId);
@@ -105,7 +105,7 @@ router.post('/change-password', authMiddleware, async (req, res) => {
 
 router.get('/me', authMiddleware, async (req, res) => {
     try {
-        const user = await User.findById(req.userId).select('-password');
+        const user = await User.findById(req.user._id).select('-password');
         if (!user)
             return res.status(404).json({ message: 'Пользователь не найден' });
 
