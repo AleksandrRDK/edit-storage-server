@@ -54,9 +54,9 @@ router.get('/paginated', async (req, res) => {
 
 router.post('/', authMiddleware, async (req, res) => {
     try {
-        const { title, author, video, tags, source, rating } = req.body;
+        const { title, video, tags, source, rating } = req.body;
 
-        if (!title || !author || !video || !source || rating === undefined) {
+        if (!title || !video || !source || rating === undefined) {
             return res
                 .status(400)
                 .json({ message: 'Заполните все обязательные поля' });
