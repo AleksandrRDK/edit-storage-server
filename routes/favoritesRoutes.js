@@ -56,7 +56,7 @@ router.get('/', authMiddleware, async (req, res) => {
     try {
         const userId = req.user._id;
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 20;
+        const limit = parseInt(req.query.limit) || 16;
         const skip = (page - 1) * limit;
 
         const user = await User.findById(userId);
@@ -66,7 +66,6 @@ router.get('/', authMiddleware, async (req, res) => {
 
         const totalFavorites = user.favorites.length;
 
-        // Проверяем, что все айди валидные
         const pagedFavoritesIds = user.favorites
             .slice(skip, skip + limit)
             .filter((id) => mongoose.Types.ObjectId.isValid(id));
@@ -77,16 +76,30 @@ router.get('/', authMiddleware, async (req, res) => {
                 page,
                 limit,
                 edits: [],
+                hasMore: false,
             });
         }
 
-        const edits = await Edit.find({ _id: { $in: pagedFavoritesIds } });
+        // Загружаем эдиты, С СОХРАНЕНИЕМ ПОРЯДКА
+        const editsUnordered = await Edit.find({
+            _id: { $in: pagedFavoritesIds },
+        });
+        const edits = pagedFavoritesIds
+            .map((id) =>
+                editsUnordered.find(
+                    (edit) => edit._id.toString() === id.toString()
+                )
+            )
+            .filter(Boolean); // убрать null, если вдруг не найдёт
+
+        const hasMore = skip + limit < totalFavorites;
 
         res.json({
             total: totalFavorites,
             page,
             limit,
             edits,
+            hasMore,
         });
     } catch (error) {
         console.error('Ошибка в GET /favorites:', error);
