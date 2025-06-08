@@ -2,6 +2,7 @@
 node_modules/
 
 # Environment variables
+credentials.txt
 .env
 .env.local
 .env.development.local
